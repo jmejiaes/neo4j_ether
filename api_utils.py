@@ -70,10 +70,13 @@ def get_address_info(address):
 
     return info
 
+import requests
+from datetime import datetime
 
 def get_block_info(block_number):
     info = {}
-    
+    base_url = 'https://api.etherscan.io/api'
+
     try:
         # Fetch the block info
         block_params = {
@@ -82,7 +85,7 @@ def get_block_info(block_number):
             'blockno': block_number,
             'apikey': API_KEY
         }
-        response = requests.get(ETHERSCAN_API_URL, params=block_params)
+        response = requests.get(base_url, params=block_params)
         response.raise_for_status()
         block_data = response.json()
 
@@ -109,6 +112,7 @@ def get_block_info(block_number):
         info['error'] = "An unexpected error occurred"
 
     return info
+
 
 def get_block_transactions(block_number):
 
@@ -191,3 +195,20 @@ def get_block_internal_transactions(block_number):
     else:
         print(f"Failed to fetch data: {response.status_code}")
         return None
+    
+if __name__ == "__main__":
+    print(get_address_info('0xa83114A443dA1CecEFC50368531cACE9F37fCCcb'))
+    print(get_address_info('0xdAC17F958D2ee523a2206206994597C13D831ec7'))
+
+    print(get_block_info(20512878))
+
+    block_number = 20512878
+    transactions = get_block_transactions(block_number)
+    print(transactions[0])
+
+
+    block_number = 20512878
+    int_transactions = get_block_internal_transactions(block_number)
+    print(int_transactions[0])
+
+    

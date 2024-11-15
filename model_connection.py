@@ -71,7 +71,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
     
     def fee_received_by_edge(self, block_number, address):
-        query = DMLQueries.fee_received_by_edge_query()
+        query = DDLQueries.fee_received_by_edge_query()
         parameters = {
             "block_number": block_number,
             "address": address
@@ -79,7 +79,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
 
     def recorded_in_edge(self, tx_hash, block_number):
-        query = DMLQueries.recorded_in_edge_query()
+        query = DDLQueries.recorded_in_edge_query()
         parameters = {
             "tx_hash": tx_hash,
             "block_number": block_number
@@ -87,7 +87,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
 
     def link_user_to_transaction_sent_by(self, user_info, transaction_info):
-        query = DMLQueries.link_user_to_transaction_sent_by_query()
+        query = DDLQueries.link_user_to_transaction_sent_by_query()
         parameters = {
             "sender_address": user_info['address'],
             "transactionhash": transaction_info['transactionhash']
@@ -95,7 +95,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
 
     def link_user_to_transaction_received_by(self, user_info, transaction_info):
-        query = DMLQueries.link_user_to_transaction_received_by_query()
+        query = DDLQueries.link_user_to_transaction_received_by_query()
         parameters = {
             "receiver_address": user_info['address'],
             "transactionhash": transaction_info['transactionhash']
@@ -103,7 +103,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
 
     def link_user_to_internal_transaction_sent_by(self, user_info, internal_transaction_info):
-        query = DMLQueries.link_user_to_internal_transaction_sent_by_query()
+        query = DDLQueries.link_user_to_internal_transaction_sent_by_query()
         parameters = {
             "sender_address": user_info['address'],
             "parenttransactionhash": internal_transaction_info['parenttransactionhash'],
@@ -112,7 +112,7 @@ class Neo4JConnection:
         self.session.run(query, parameters)
 
     def link_user_to_internal_transaction_received_by(self, user_info, internal_transaction_info):
-        query = DMLQueries.link_user_to_internal_transaction_received_by_query()
+        query = DDLQueries.link_user_to_internal_transaction_received_by_query()
         parameters = {
             "receiver_address": user_info['address'],
             "parenttransactionhash": internal_transaction_info['parenttransactionhash'],
@@ -178,3 +178,4 @@ class Neo4JConnection:
     def get_block_count(self):
         query = DMLQueries.get_block_count_query()
         return self.session.run(query)
+    

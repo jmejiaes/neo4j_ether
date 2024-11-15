@@ -2,8 +2,8 @@
 import os
 import pandas as pd
 
-from src.plots import plot_bar_chart
-from src.preprocess import save_results_to_csv
+from plots import plot_bar_chart
+from preprocess import save_results_to_csv
 
 
 def process_results(neo4j_connection, result_dir):

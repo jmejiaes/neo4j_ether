@@ -1,6 +1,6 @@
 
-from src.api_utils import get_address_info, get_block_info, get_block_internal_transactions, get_block_transactions
-from src.preprocess import process_transaction
+from api_utils import get_address_info, get_block_info, get_block_internal_transactions, get_block_transactions
+from preprocess import process_transaction
 
 def load_data_from_block_interval(initial_block, final_block, neo4j_connection):
 
