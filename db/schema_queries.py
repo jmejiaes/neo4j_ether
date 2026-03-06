@@ -1,8 +1,25 @@
-class Queries:
+"""Schema queries use MERGE throughout for idempotency — safe to re-run without duplicating data."""
+
+
+class SchemaQueries:
 
     @staticmethod
     def clear_database_query():
         return "MATCH (n) DETACH DELETE n"
+
+    @staticmethod
+    def create_block_node_query():
+        return (
+            "MERGE (b:Block {number: $block_number}) "
+            "ON CREATE SET b.reward = $block_reward, b.time = $block_time"
+        )
+
+    @staticmethod
+    def create_user_node_query():
+        return (
+            "MERGE (u:User {address: $address}) "
+            "ON CREATE SET u.balance = $balance, u.iscontract = $is_contract"
+        )
 
     @staticmethod
     def create_transaction_node_query():
@@ -19,28 +36,8 @@ class Queries:
         return (
             "MERGE (parent:Transaction {transactionhash: $parenttransactionhash}) "
             "MERGE (t:InternalTransaction {parenttransactionhash: $parenttransactionhash, sequence_id: $sequence_id}) "
-            "ON CREATE SET "
-            "t.amount = $amount, "
-            "t.isinternaltransaction = $isinternaltransaction "
+            "ON CREATE SET t.amount = $amount, t.isinternaltransaction = $isinternaltransaction "
             "MERGE (parent)-[:HAS_INTERNAL_TRANSACTION]->(t)"
-        )
-
-    @staticmethod
-    def create_block_node_query():
-        return (
-            "MERGE (b:Block {number: $block_number}) "
-            "ON CREATE SET "
-            "b.reward = $block_reward, "
-            "b.time = $block_time"
-        )
-
-    @staticmethod
-    def create_user_node_query():
-        return (
-            "MERGE (u:User {address: $address}) "
-            "ON CREATE SET "
-            "u.balance = $balance, "
-            "u.iscontract = $is_contract"
         )
 
     @staticmethod
@@ -68,7 +65,7 @@ class Queries:
         )
 
     @staticmethod
-    def link_user_to_transaction_sent_by_query():
+    def sent_by_edge_query():
         return (
             "MATCH (u:User {address: $sender_address}) "
             "MATCH (t:Transaction {transactionhash: $transactionhash}) "
@@ -76,7 +73,7 @@ class Queries:
         )
 
     @staticmethod
-    def link_user_to_transaction_received_by_query():
+    def received_by_edge_query():
         return (
             "MATCH (u:User {address: $receiver_address}) "
             "MATCH (t:Transaction {transactionhash: $transactionhash}) "
@@ -84,7 +81,7 @@ class Queries:
         )
 
     @staticmethod
-    def link_user_to_internal_transaction_sent_by_query():
+    def internal_sent_by_edge_query():
         return (
             "MATCH (u:User {address: $sender_address}) "
             "MATCH (it:InternalTransaction {parenttransactionhash: $parenttransactionhash, sequence_id: $sequence_id}) "
@@ -92,10 +89,9 @@ class Queries:
         )
 
     @staticmethod
-    def link_user_to_internal_transaction_received_by_query():
+    def internal_received_by_edge_query():
         return (
             "MATCH (u:User {address: $receiver_address}) "
             "MATCH (it:InternalTransaction {parenttransactionhash: $parenttransactionhash, sequence_id: $sequence_id}) "
             "MERGE (u)-[:RECEIVED_BY]->(it)"
         )
-
