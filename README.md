@@ -88,6 +88,25 @@ uv run python scripts/dump_stats.py [label]
 Outputs land under `data/results/<era>/<n>/` (per-run) and `data/output/`
 (comparisons); both are gitignored and fully regenerable.
 
+## Regenerating the paper
+
+The manuscript source is `docs/paper/paper_v2.md`; the `.docx` and the Appendix A
+tables are derived from it and from the result CSVs.
+
+```bash
+# Appendix A tables (from data/results/ CSVs) -> docs/paper/appendix_tables.md,
+# whose content is embedded into the manuscript's Appendix A:
+uv run python scripts/gen_appendix_tables.py
+
+# paper_v2.md -> paper_v2.docx, with a table of contents and the figures
+# (figures/*.png) embedded. Run from docs/paper/ so the relative paths resolve.
+# Requires pandoc (https://pandoc.org).
+cd docs/paper && pandoc paper_v2.md -o paper_v2.docx --toc
+```
+
+The figures (`docs/paper/figures/fig4–8.png`) are plotted from the same result CSVs
+via `src/ether/visualization/` and committed as artifacts.
+
 ## Experiment design (ADR-0003)
 
 Each **era** is a contiguous block window from a distinct period of Ethereum
