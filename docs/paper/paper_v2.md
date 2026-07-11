@@ -516,6 +516,15 @@ blockchain analytical queries, since complex Cypher queries — as the
 total-participation case in Section 4.6 shows — can be both hard to write and
 sensitive to scale.
 
+## Code and data availability
+
+The complete implementation — the graph schema, the BigQuery ingestion pipeline,
+the fourteen analytical queries, and the scripts that regenerate every figure and
+table in this paper — is openly available at
+<https://github.com/jmejiaes/neo4j_ether>. All results are reproducible from the
+public `bigquery-public-data.crypto_ethereum` dataset; the repository documents the
+block windows, the cumulative block-count ladder, and the eras used.
+
 ## References
 
 *(Bakkal et al. 2017; Elayam et al. 2022; Gómez,
