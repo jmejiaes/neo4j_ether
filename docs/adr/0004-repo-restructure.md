@@ -42,7 +42,7 @@ Key moves:
 
 ## Consequences
 
-- One versioned repo covering code + docs + paper; advisor-facing remote unchanged.
+- One versioned repo covering code + docs + paper; the remote URL is unchanged.
 - Import path churn (`src.` → `ether.`) — mechanical, one-time.
 - History preserved via `.git` relocation (file moves tracked as renames).
 - Removing multi-era later (ADR-0003) stays a config + `data/<era>` deletion.

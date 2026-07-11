@@ -11,9 +11,9 @@ is to (a) scale to ≥1,000 blocks and (b) optionally compare across several era
 do not need to change — only the *scope of data* and the *comparison/discussion*
 layer do.
 
-A hard constraint from the author: multi-era must be **easy to remove**. If the
-advisor wants to keep only the original 2024 era worked on this year, deleting the
-other eras must be trivial and must not disturb the single-era results.
+A hard design constraint: multi-era must be **easy to remove**. If only the
+original 2024 era is desired, deleting the other eras must be trivial and must not
+disturb the single-era results.
 
 ## Decision
 

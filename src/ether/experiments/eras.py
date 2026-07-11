@@ -6,8 +6,8 @@ queries; comparing across eras is what surfaces structural evolution (e.g. the
 birth of WETH as a dominant intermediary, the rise of internal-tx complexity).
 
 Removability (per ADR-0003): eras are just entries in ERAS. To keep only the
-original 2024 window your advisor worked on, delete/comment the other entries and
-skip the cross-era reporting stage — nothing else changes. ERAS[0] is canonical.
+canonical 2024 window, delete/comment the other entries and skip the cross-era
+reporting stage — nothing else changes. ERAS[0] is canonical.
 
 Block heights were verified against real block timestamps (via `verify_era_dates`
 in ingestion/bigquery.py); the era dates below are confirmed.

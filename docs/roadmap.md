@@ -59,7 +59,7 @@ Raw outputs (gitignored, regenerable): data/results/<era>/<n>/, data/output/.
    window once; query at cumulative cut-offs; generate CSV/PNG/markdown tables.
 7. **Draft manuscript sections.** Methodology (BigQuery, local Neo4j, dropped
    balance, eras) + Experiments (new scale + cross-era findings) + abstract tweak,
-   as markdown for the author to paste into the `.docx`.
+   as markdown to paste into the `.docx`.
 
 ## Open items to verify during implementation
 - Exact block heights for eras 2–4 (2016 / DeFi-summer 2020 / post-Merge 2023).
