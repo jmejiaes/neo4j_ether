@@ -94,6 +94,9 @@ The manuscript source is `docs/paper/paper_v2.md`; the `.docx` and the Appendix 
 tables are derived from it and from the result CSVs.
 
 ```bash
+# Figures fig4–8 (from data/results/ CSVs + summary.json) -> docs/paper/figures/:
+uv run python scripts/gen_paper_figures.py
+
 # Appendix A tables (from data/results/ CSVs) -> docs/paper/appendix_tables.md,
 # whose content is embedded into the manuscript's Appendix A:
 uv run python scripts/gen_appendix_tables.py
@@ -104,8 +107,8 @@ uv run python scripts/gen_appendix_tables.py
 cd docs/paper && pandoc paper_v2.md -o paper_v2.docx --toc
 ```
 
-The figures (`docs/paper/figures/fig4–8.png`) are plotted from the same result CSVs
-via `src/ether/visualization/` and committed as artifacts.
+The figures and tables are derived from `data/results/` (gitignored); run
+`scripts/run_experiments.py` first if that directory is empty.
 
 ## Experiment design (ADR-0003)
 
