@@ -94,7 +94,7 @@ The manuscript source is `docs/paper/paper_v2.md`; the `.docx` and the Appendix 
 tables are derived from it and from the result CSVs.
 
 ```bash
-# Conceptual model diagrams fig1–3 (static schema; needs `brew install graphviz`):
+# Conceptual model diagrams fig1–3 (static schema, matplotlib):
 uv run python scripts/gen_model_figures.py
 
 # Result figures fig4–8 (from data/results/ CSVs + summary.json):
