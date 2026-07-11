@@ -149,6 +149,13 @@ Lin et al. (2020) model Ethereum transaction records as a temporal weighted
 multidigraph (TWMDG) and introduce temporal random-walk strategies for link
 prediction, outperforming traditional random-walk techniques on real Ethereum data.
 
+Other studies analyse Ethereum activity for specific phenomena rather than proposing
+a general analytical model: Said et al. (2021) characterise transaction behaviour,
+community structure, and link prediction across the network; Kiffer et al. (2018)
+study the smart-contract ecosystem and contract creation/interaction patterns; and
+Victor & Weintraud (2021) detect and quantify wash trading on decentralized
+exchanges.
+
 ### 2.3 Positioning
 
 Most previous works are trajectory-centric, focusing on spatial/temporal features,
@@ -161,6 +168,20 @@ data. The proposed contribution addresses this gap with a formal model enabling
 graph-style analytical queries over Ethereum data — including both external and
 internal transactions — and demonstrates it at scale (up to 10,000 blocks) and
 across four eras. Table 1 summarizes the analyzed works and their limitations.
+
+**Table 1.** Summary of the analyzed works.
+
+| Reference | Contribution | Limitation |
+|-----------|--------------|------------|
+| Bakkal et al. (2017) | Model and implement trajectories in Neo4j to support car-pool matching. | No performance metrics; modest dataset; trip semantics (cost, goal, purpose) not considered. |
+| Khan et al. (2017) | Provide an empirical performance comparison between Neo4j and Oracle. | Spatial and spatio-temporal queries not considered. |
+| Gómez, Kuijpers & Vaisman (2019) | Implement a semantic trajectory model in Neo4j and compare it against PostgreSQL. | Limited relational baseline; moderate dataset; no big-data stress test. |
+| Tamilmani & Stefanakis (2019) | Propose a method for modelling and analyzing SESTs in Neo4j. | Limited query evaluation; no large-scale benchmark; algorithmic complexity not analyzed. |
+| Karim et al. (2021) | Define a semantic trajectory model with events for pedestrian mobility analytics. | Neo4j schema and analytical queries not provided; no experimental evaluation. |
+| Xue et al. (2022) | Present CoGAT, a hierarchical graph model for representing Argo float trajectories in Neo4j. | Domain-specific to Argo floats; limited generic attributes; coarse temporal granularity. |
+| Elayam et al. (2022) | Propose a hierarchical graph-based model for analyzing mobility data at multiple spatial scales in Neo4j. | Validated only on maritime traffic data. |
+| Estupiñán (2020) | Conduct clustering analysis on Ethereum with graph databases. | Focused on clustering and performance for two Ethereum use cases. |
+| Lin et al. (2020) | Propose a temporal weighted multidigraph (TWMDG) model for Ethereum and temporal random-walk strategies for link prediction. | Focused on link prediction rather than transaction analysis; scalability not addressed. |
 
 ## 3. Model definition
 
@@ -177,7 +198,11 @@ user-initiated action submitted by an Externally Owned Account (EOA), recorded
 directly in a block and uniquely identified by a transaction hash. An **internal
 transaction** is a value transfer or contract call triggered during the execution
 of an external transaction through smart-contract code; it is identified by its
-parent external transaction together with a sequential number.
+parent external transaction together with a sequential number. Thus, an external
+transaction initiated by an EOA, whether addressed to another EOA or to a smart
+contract, may trigger a cascade of internal transactions, as illustrated in Figure 1.
+
+![Figure 1. External and internal transactions. An external transaction, initiated by an EOA and addressed to another account or to a smart contract, may trigger a cascade of internal transactions during contract execution.](figures/fig1_model_transactions.png)
 
 ### 3.1 Block node
 Attributes: `blockNumber` (the block height, unique) and `dateCreation` (creation
@@ -210,6 +235,10 @@ transaction** (external transaction → its internal transactions, keyed by
 `parentTransactionHash` + `sequenceId`); and **internal sent by** / **internal
 received by** (internal transaction ↔ sender/receiver account). Constraints and
 datatypes are illustrated in Figures 2 and 3.
+
+![Figure 2. Structure of blocks and external transactions. Blocks form a trajectory through `previous block` edges; an external transaction is `recorded in` its block and linked by `sent by` / `received by` to its sender and receiver accounts. Account nodes carry only `address` and `isContract`.](figures/fig2_model_block_external.png)
+
+![Figure 3. Relationship between external and internal transactions. An external transaction triggers internal transactions (keyed by `parentTransactionHash` and `sequenceId`), each linked by `internal sent by` / `internal received by` to its own sender and receiver accounts.](figures/fig3_model_internal.png)
 
 ## 4. Experiments
 
@@ -527,11 +556,63 @@ block windows, the cumulative block-count ladder, and the eras used.
 
 ## References
 
-*(Bakkal et al. 2017; Elayam et al. 2022; Gómez,
-Kuijpers & Vaisman 2019; Karim et al. 2021; Khan et al. 2017; Lin et al. 2020;
-Tamilmani & Stefanakis 2019; Xue et al. 2022; Estupiñán 2020; Said et al. 2021;
-Kiffer et al. 2018; Victor & Weintraud 2021; Victor 2019; Tschorsch & Scheuermann
-2016.)*
+Bakkal, F., Eken, S., Savaş, N. S., & Sayar, A. (2017). Modeling and querying
+trajectories using Neo4j Spatial and TimeTree for carpool matching. *2017
+International Conference on Innovations in Intelligent Systems and Applications
+(INISTA)* (pp. 219–222). <https://doi.org/10.1109/INISTA.2017.8001160>
+
+Elayam, M. M., Ray, C., & Claramunt, C. (2022). A hierarchical graph-based model for
+mobility data representation and analysis. *Data & Knowledge Engineering, 142*,
+102054. <https://doi.org/10.1016/j.datak.2022.102054>
+
+Estupiñán, A. (2020). *Analysis of modern blockchain networks using graph databases*
+[Master's thesis, Technische Universität Berlin, Service-centric Networking].
+<https://doi.org/10.13140/RG.2.2.20215.14245>
+
+Gómez, L. I., Kuijpers, B., & Vaisman, A. (2019). Analytical queries on semantic
+trajectories using graph databases. *Transactions in GIS, 23*(5), 948–973.
+<https://doi.org/10.1111/tgis.12556>
+
+Karim, L., Boulmakoul, A., Zeitouni, K., & Lbath, A. (2021). From raw pedestrian
+trajectories to a semantic graph-structured model: Towards an end-to-end
+spatiotemporal analytics framework. *Procedia Computer Science, 184*, 60–67.
+<https://doi.org/10.1016/j.procs.2021.03.018>
+
+Khan, W., Ahmed, E., & Shahzad, W. (2017). Predictive performance comparison analysis
+of relational & NoSQL graph databases. *International Journal of Advanced Computer
+Science and Applications, 8*(5). <https://doi.org/10.14569/IJACSA.2017.080564>
+
+Kiffer, L., Levin, D., & Mislove, A. (2018). Analyzing Ethereum's smart contract
+ecosystem. *Proceedings of the Internet Measurement Conference 2018*, 490–496.
+
+Lin, D., Wu, J., Yuan, Q., & Zheng, Z. (2020). Modeling and understanding Ethereum
+transaction records via a complex network approach. *IEEE Transactions on Circuits
+and Systems II: Express Briefs, 67*(11), 2737–2741.
+<https://doi.org/10.1109/TCSII.2020.2968376>
+
+Said, A., Janjua, M. U., Hassan, S., Muzammal, Z., Saleem, T., Thaipisutikul, T.,
+Tuarob, S., & Nawaz, R. (2021). Detailed analysis of Ethereum network on transaction
+behavior, community structure and link prediction. *PeerJ Computer Science, 7*, e815.
+<https://doi.org/10.7717/peerj-cs.815>
+
+Tamilmani, K., & Stefanakis, E. (2019). Modelling and analysis of semantically
+enriched simplified trajectories using graph databases. *ISPRS International Journal
+of Geo-Information* (Advances in Cartography and GIScience of the ICA, Vol. 1), 20.
+<https://doi.org/10.5194/ica-adv-1-20-2019>
+
+Tschorsch, F., & Scheuermann, B. (2016). Bitcoin and beyond: A technical survey on
+decentralized digital currencies. *IEEE Communications Surveys & Tutorials, 18*(3),
+2084–2123. <https://doi.org/10.1109/COMST.2016.2535718>
+
+Victor, F. (2019). Address clustering heuristics for Ethereum. In *Financial
+Cryptography and Data Security (FC 2019)*. Springer.
+
+Victor, F., & Weintraud, A. M. (2021). Detecting and quantifying wash trading on
+decentralized cryptocurrency exchanges. *arXiv preprint* arXiv:2102.07001.
+
+Xue, C., Zhang, T., Xu, Y., & Su, F. (2022). An ocean current-oriented graph-based
+model for representing Argo trajectories. *Computers & Geosciences, 168*, 105143.
+<https://doi.org/10.1016/j.cageo.2022.105143>
 
 Data source:
 - Google BigQuery public dataset `bigquery-public-data.crypto_ethereum` (Ethereum

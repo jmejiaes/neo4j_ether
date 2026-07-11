@@ -94,7 +94,10 @@ The manuscript source is `docs/paper/paper_v2.md`; the `.docx` and the Appendix 
 tables are derived from it and from the result CSVs.
 
 ```bash
-# Figures fig4–8 (from data/results/ CSVs + summary.json) -> docs/paper/figures/:
+# Conceptual model diagrams fig1–3 (static schema; needs `brew install graphviz`):
+uv run python scripts/gen_model_figures.py
+
+# Result figures fig4–8 (from data/results/ CSVs + summary.json):
 uv run python scripts/gen_paper_figures.py
 
 # Appendix A tables (from data/results/ CSVs) -> docs/paper/appendix_tables.md,
