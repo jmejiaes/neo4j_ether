@@ -2,8 +2,13 @@ import os
 import pandas as pd
 
 
-def create_results_directory(block_count: int, initial_block: int, final_block: int) -> str:
-    path = f"results_for_{block_count}_({initial_block}_{final_block})"
+def era_result_dir(base_dir: str, era_name: str, block_count: int) -> str:
+    """Per-run output dir: <base_dir>/results/<era_name>/<block_count>/ (ADR-0003).
+
+    Partitioning by era keeps runs separable — deleting an era = deleting its
+    directory, with no effect on other eras' results.
+    """
+    path = os.path.join(base_dir, "results", era_name, str(block_count))
     os.makedirs(path, exist_ok=True)
     return path
 

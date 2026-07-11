@@ -1,6 +1,13 @@
+"""LEGACY — the original Etherscan extraction (kept as a reference/fallback only).
+
+Superseded by ingestion/bigquery.py (ADR-0001). Not used by pipeline.py anymore;
+retained because it documents the paper's original acquisition method and could
+serve as a fallback if BigQuery is unavailable.
+"""
+
 import requests
 from datetime import datetime
-from src.config import API_KEY, ETHERSCAN_API_URL
+from ether.config import API_KEY, ETHERSCAN_API_URL
 
 
 def get_address_info(address: str) -> dict:

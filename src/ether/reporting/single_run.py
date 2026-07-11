@@ -9,9 +9,9 @@ import os
 import pandas as pd
 import seaborn as sns
 
-from src.db.connection import Neo4JConnection
-from src.reporting.io import save_csv
-from src.visualization.bar_charts import plot_bar_chart
+from ether.db.connection import Neo4JConnection
+from ether.reporting.io import save_csv
+from ether.visualization.bar_charts import plot_bar_chart
 
 
 _RED = sns.color_palette("Reds", n_colors=10)[::-1]
@@ -79,8 +79,8 @@ def _query_2(connection, result_dir, block_count):
 
     df = _run(connection, "get_most_active_accounts_total_percentage")
     _bar(df, "account", "total_percentage", _BLUE,
-         "Top 10 Most Active Accounts by Total Transactions", "Account",
-         "Total Transaction %", result_dir, "query_2/query_2_3", block_count)
+         "Top 10 Most Active Accounts by Total Participation", "Account",
+         "Participation %", result_dir, "query_2/query_2_3", block_count)
 
 
 def _query_4(connection, result_dir):
