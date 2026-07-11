@@ -26,7 +26,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, FancyBboxPatch, Rectangle
+from matplotlib.patches import Arc, Circle, FancyArrow, FancyBboxPatch, Rectangle
 
 ROOT = Path(__file__).resolve().parents[1]
 FIGDIR = ROOT / "docs" / "paper" / "figures"
@@ -103,41 +103,73 @@ def _acct(addr, is_contract):
     return f"{{\n'address' : '{addr}',\n'isContract' : {is_contract}\n}}"
 
 
+# --- icon helpers (outline person / document) + block arrow ------------------
+
+def _person(ax, cx, cy, s=1.0, lw=2.0):
+    """Outline person icon: circular head + a shoulders arc."""
+    ax.add_patch(Circle((cx, cy + 0.55 * s), 0.34 * s, fill=False,
+                        edgecolor="black", linewidth=lw, zorder=3))
+    ax.add_patch(Arc((cx, cy - 0.30 * s), 1.5 * s, 1.7 * s, angle=0,
+                    theta1=25, theta2=155, edgecolor="black", linewidth=lw, zorder=3))
+
+
+def _document(ax, cx, cy, w=1.1, h=1.5, lw=1.8):
+    """Outline document/contract icon: page + text lines + a '— ×' footer."""
+    ax.add_patch(Rectangle((cx - w / 2, cy - h / 2), w, h, facecolor="white",
+                          edgecolor="black", linewidth=lw, zorder=3))
+    for yy in (cy + 0.28 * h, cy + 0.10 * h, cy - 0.08 * h):
+        ax.plot([cx - 0.28 * w, cx + 0.28 * w], [yy, yy], color="black", lw=1.2, zorder=4)
+    ax.plot([cx - 0.28 * w, cx - 0.05 * w], [cy - 0.26 * h, cy - 0.26 * h],
+            color="black", lw=1.2, zorder=4)
+    ax.text(cx + 0.13 * w, cy - 0.26 * h, "×", ha="center", va="center",
+            fontsize=8, zorder=4)
+
+
+def _barrow(ax, x, y, dx, dy):
+    """Solid blue block arrow (rectangular shaft + triangular head)."""
+    ax.add_patch(FancyArrow(x, y, dx, dy, width=0.16, head_width=0.5, head_length=0.45,
+                 length_includes_head=True, facecolor=FLOW, edgecolor=FLOW, zorder=2))
+
+
 # --- Figure 1 — external/internal transactions (conceptual flow) -------------
 
 def fig1():
-    fig, ax = plt.subplots(figsize=(16, 6.2))
-    ax.set_xlim(0, 20); ax.set_ylim(0, 8); ax.set_aspect("equal"); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(15, 7.5))
+    ax.set_xlim(0, 20); ax.set_ylim(0, 10); ax.set_aspect("equal"); ax.axis("off")
 
-    def rbox(cx, cy, w, h, label, rounded=True, fs=13, lw=1.6, ec="#888888"):
-        style = "round,pad=0,rounding_size=0.3" if rounded else "square,pad=0"
-        ax.add_patch(FancyBboxPatch((cx - w / 2, cy - h / 2), w, h, boxstyle=style,
-                     facecolor="white", edgecolor=ec, linewidth=lw, zorder=2))
+    def box(cx, cy, w, h, label, lw=1.6, fs=13):
+        ax.add_patch(Rectangle((cx - w / 2, cy - h / 2), w, h, fill=False,
+                     edgecolor="black", linewidth=lw, zorder=2))
         ax.text(cx, cy, label, ha="center", va="center", fontsize=fs, zorder=3)
 
-    # EOA
-    rbox(2.1, 5.0, 2.8, 1.7, "EOA\n(Sender)")
-    # Smart-contract container (thick square rectangle)
-    ax.add_patch(Rectangle((5.0, 3.7), 10.6, 2.9, fill=False, edgecolor="black",
-                 linewidth=2.4, zorder=1.5))
-    ax.text(10.3, 6.15, "Smart contract", ha="center", va="center", fontsize=15,
-            zorder=3)
-    rbox(7.1, 4.85, 2.6, 1.5, "External\ntransaction", rounded=False, ec="#444444")
-    rbox(10.3, 4.85, 2.1, 1.3, "contract\ncode", ec="#444444")
-    rbox(13.5, 4.85, 2.6, 1.5, "Internal\ntransactions", rounded=False, ec="#444444")
-    # Receiver
-    rbox(16.6, 1.4, 6.0, 1.5, "Receiver (EOA or Smart contract)")
+    # EOA (person icon + label)
+    _person(ax, 2.3, 6.5)
+    ax.text(2.3, 5.25, "EOA\n(Sender)", ha="center", va="center", fontsize=13, zorder=3)
 
-    aprops = dict(arrowstyle="-|>", color=FLOW, lw=3, mutation_scale=24,
-                  shrinkA=0, shrinkB=0)
-    ax.annotate("", xy=(5.8, 4.85), xytext=(3.5, 5.0), arrowprops=aprops)
-    ax.annotate("", xy=(9.25, 4.85), xytext=(8.4, 4.85), arrowprops=aprops)
-    ax.annotate("", xy=(12.2, 4.85), xytext=(11.35, 4.85), arrowprops=aprops)
-    # down-curving arrow from the contract box to the receiver
-    ax.annotate("", xy=(14.0, 1.7), xytext=(10.5, 3.6),
-                arrowprops=dict(arrowstyle="-|>", color=FLOW, lw=3,
-                                mutation_scale=24, shrinkA=0, shrinkB=0,
-                                connectionstyle="arc3,rad=-0.25"))
+    # Smart-contract container
+    ax.add_patch(Rectangle((5.3, 5.0), 11.3, 3.2, fill=False, edgecolor="black",
+                 linewidth=2.0, zorder=1.5))
+    ax.text(10.95, 7.7, "Smart contract", ha="center", va="center", fontsize=15, zorder=3)
+    box(7.2, 6.3, 2.7, 1.6, "External\ntransaction")
+    _document(ax, 10.5, 6.3, w=1.1, h=1.5)
+    box(13.9, 6.3, 2.7, 1.6, "Internal\ntransactions")
+
+    # horizontal block arrows through the flow
+    _barrow(ax, 3.35, 6.3, 2.4, 0)      # EOA -> External transaction
+    _barrow(ax, 8.65, 6.3, 1.2, 0)      # External transaction -> contract code
+    _barrow(ax, 11.15, 6.3, 1.35, 0)    # contract code -> Internal transactions
+
+    # downward block arrow from the smart contract to the receiver
+    _barrow(ax, 10.95, 4.9, 0, -1.5)
+
+    # Receiver box (person + document icons), label below
+    ax.add_patch(Rectangle((8.7, 1.4), 4.5, 2.0, fill=False, edgecolor="black",
+                 linewidth=2.0, zorder=2))
+    _person(ax, 10.0, 2.35, s=0.8)
+    _document(ax, 12.0, 2.4, w=0.9, h=1.25)
+    ax.text(10.95, 0.8, "Receiver (EOA or Smart contract)", ha="center",
+            va="center", fontsize=13, zorder=3)
+
     _save(fig, "fig1_model_transactions.png")
 
 
